@@ -219,6 +219,9 @@ xcdbus_init2(const char *service_name, DBusGConnection *connG)
 {
   xcdbus_conn_t *c = xcdbus_init_common(service_name, connG, 0);
 
+  if (!c)
+      return NULL;
+
   /* setup watching */
   dbus_connection_set_watch_functions (
       c->conn,
@@ -340,6 +343,10 @@ EXTERNAL xcdbus_conn_t *
 xcdbus_init_event(const char *service_name, DBusGConnection *connG)
 {
   xcdbus_conn_t *c = xcdbus_init_common(service_name, connG, 0);
+
+  if (!c)
+      return NULL;
+
   /* setup watching */
   dbus_connection_set_watch_functions (
       c->conn,
