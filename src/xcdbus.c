@@ -280,6 +280,7 @@ watch_add_event (DBusWatch * watch, void *_c)
 {
   xcdbus_conn_t *c = (xcdbus_conn_t *) _c;
   int fd = dbus_watch_get_unix_fd (watch);
+  int pending;
 
   if (dbus_watch_get_enabled (watch))
     {
@@ -301,7 +302,13 @@ watch_add_event (DBusWatch * watch, void *_c)
           w->dbw = watch;
       }
 
-      event_set(&w->ev, w->fd, ev_type, event_cb, w);
+      pending = event_pending(&w->ev, ev_type, NULL);
+
+      /* Make sure we don't call event_set on an already pending event! */
+      if (!pending) {
+          event_set(&w->ev, w->fd, ev_type, event_cb, w);
+      }
+
       event_add(&w->ev, NULL);
     }
 
